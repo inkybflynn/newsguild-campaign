@@ -1984,16 +1984,16 @@ footer {
     if (_view !== 'desktop') setView(_view);
   });
 
-  // Hide floating Sign Now CTA when petition section is in view
+  // Hide viewport toolbar once user scrolls past hero
   (function() {
-    var cta = document.querySelector('.floating-cta');
-    var petition = document.getElementById('petition');
-    if (!cta || !petition) return;
+    var toolbar = document.getElementById('wf-toolbar');
+    var hero = document.getElementById('hero');
+    if (!toolbar || !hero) return;
     var observer = new IntersectionObserver(function(entries) {
-      cta.style.opacity = entries[0].isIntersecting ? '0' : '1';
-      cta.style.pointerEvents = entries[0].isIntersecting ? 'none' : 'auto';
+      toolbar.style.opacity = entries[0].isIntersecting ? '1' : '0';
+      toolbar.style.pointerEvents = entries[0].isIntersecting ? 'auto' : 'none';
     }, { threshold: 0.1 });
-    observer.observe(petition);
+    observer.observe(hero);
   })();
 
   // Assemble contact email client-side to prevent scraping
