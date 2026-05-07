@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NewsGuild of Greater Philadelphia — Fair Contract Campaign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<style>
+  /* Redaction — self-hosted (SIL OFL).
+     Weights mapped: Regular cuts → CSS weight 400; Bold cuts → CSS weight 700. */
+  @font-face {
+    font-family: 'Redaction';
+    src: url('fonts/redaction-web/Redaction_100-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Redaction';
+    src: url('fonts/redaction-web/Redaction_100-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Redaction Display';
+    src: url('fonts/redaction-web/Redaction_50-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Redaction Display';
+    src: url('fonts/redaction-web/Redaction_50-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────
+   DESIGN SYSTEM TOKENS
+───────────────────────────────── */
+:root {
+  /* Typography — Redaction (serif) does both display + body; Barlow Condensed
+     stays as the UI label face exactly as before. */
+  --font-display: 'Redaction Display', 'Redaction', Georgia, serif;   /* headlines / h1 / h2 */
+  --font-serif:   'Redaction', Georgia, serif;                        /* body prose */
+  --font-ui:      'Barlow Condensed', 'Arial Narrow', sans-serif;     /* badges, buttons, meta — unchanged */
+
+  /* ───────── Palette — 5 colors ─────────
+     Every surface, mark, and interaction state is sourced from these five.
+     Everything else below is derived from them so the system stays honest. */
+  --ink:    #222222;    /* primary text, borders, dark UI */
+  --paper:  #FFFFFF;    /* page bg, reverse text */
+  --bone:   #F1EEE8;    /* warm tint — section color-shift */
+  --night:  #18191C;    /* dark-band bg (demands, stat sidebar) */
+  --teal:   #0E7C7B;    /* accent + CTA fill + interaction */
+
+  /* Derived states — all computed from the 5 above.
+     These aren't new colors; they're functional aliases so rules stay readable. */
+  --teal-deep:  color-mix(in oklab, var(--teal), black 22%);          /* button hover — 7.3:1 on white */
+  --muted:      rgba(34, 34, 34, 0.62);                                /* 62% ink — caption / secondary text */
+  --border:     rgba(34, 34, 34, 0.14);                                /* 14% ink — hairlines */
+  --dot:        rgba(34, 34, 34, 0.16);                                /* 16% ink — dot pattern */
+
+  /* Layout */
+  --r:          4px;
+  --max:        1360px;
+  --inner-max:  1100px;   /* shared inner width for every section (unifies the grid) */
+  --prose-max:  680px;    /* narrow prose column, left-aligned within --inner-max */
+  --pad-h:      56px;     /* desktop side padding — bumped from 40 to keep content off the viewport edge in the 1024–1280 range */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+/* Dot pattern is applied per-section (not on body) so color shifts between
+   sections read as color shifts, not as lines cutting through the dot grid. */
+body {
+  font-family: var(--font-serif);
+  background-color: var(--paper);
+  color: var(--ink);
+  font-size: 17px;          /* up from 16 — especially kinder on mobile over dots */
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+a {
+  color: inherit;                          /* text color inherits from context — works in light + dark sections */
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--border);    /* quiet underline by default */
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s, text-decoration-thickness 0.15s;
+}
+a:hover {
+  text-decoration-color: var(--teal);      /* hover signal stays inside the system — teal underline */
+  text-decoration-thickness: 2px;
+}
+/* Button link-state colors. Explicitly setting :hover / :focus / :active alongside
+   :link / :visited is required — otherwise :visited wins the specificity race on
+   links the user has already clicked, and hover text stays dark gray on the teal
+   fill (≈3.5:1, fails WCAG AA). Keeping all states on white forces full ≥5:1
+   contrast on every hover, focus, and active press. */
+a.btn-primary, a.btn-primary:link, a.btn-primary:visited,
+a.btn-primary:hover, a.btn-primary:focus, a.btn-primary:active { color: var(--paper); text-decoration: none; }
+a.btn-ghost, a.btn-ghost:link, a.btn-ghost:visited { color: var(--ink); text-decoration: none; }
+a.btn-ghost:hover, a.btn-ghost:focus, a.btn-ghost:active { color: var(--paper); text-decoration: none; }
+a.btn-outline-sm, a.btn-outline-sm:link, a.btn-outline-sm:visited { color: var(--ink); text-decoration: none; }
+a.btn-outline-sm:hover, a.btn-outline-sm:focus, a.btn-outline-sm:active { color: var(--paper); text-decoration: none; }
+a.share-btn, a.share-btn:link, a.share-btn:visited { color: rgba(255,255,255,0.7); text-decoration: none; }
+
+/* Visible focus ring for keyboard users (accessibility + security: never rely on
+   hover-only affordances that exclude keyboard / assistive tech users). */
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ─────────────────────────────────
+   LAYOUT — all sections ride the same rails.
+   Every section is full-bleed (for the color band); .inner clamps content
+   to --inner-max. This fixes the grid alignment issue Sam flagged.
+───────────────────────────────── */
+.container {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--pad-h);
+}
+
+section {
+  padding: 80px 0;
+  max-width: 100%;
+  margin: 0;
+}
+
+.inner {
+  max-width: var(--inner-max);
+  margin: 0 auto;
+  padding: 0 var(--pad-h);
+}
+
+/* Dot texture as a reusable mixin class — apply only where we want it. */
+.dots-light {
+  background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.dots-dark {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* ─────────────────────────────────
+   TYPE SCALE
+   Display headings use Redaction Display (level 50 — texture without noise) at
+   weight 600/700; body prose uses Redaction (level 100 — cleanest cut) at 17px.
+   Body size held at 17/18px so the dot pattern doesn't overwhelm reading,
+   especially on mobile. font-variation-settings calls below are leftover from
+   Fraunces/Newsreader (variable fonts); Redaction is static, so they're harmless
+   no-ops — left in place in case we ever swap back to a variable face.
+───────────────────────────────── */
+.t-display {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4.5vw, 56px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-variation-settings: "opsz" 120, "SOFT" 30;
+}
+
+.t-h1 {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 3.6vw, 44px);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--ink);
+  font-variation-settings: "opsz" 72;
+}
+
+.t-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.2vw, 38px);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--ink);
+  font-variation-settings: "opsz" 48;
+}
+
+.t-h3 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.t-body {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.t-label {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.t-caption {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ─────────────────────────────────
+   BADGE / EYEBROW
+───────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--muted);
+  color: var(--paper);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 16px;
+  padding: 8px 10px;
+  border-radius: var(--r);
+  margin-bottom: 2rem;
+}
+
+/* ─────────────────────────────────
+   BUTTONS
+───────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--teal);               /* teal fill */
+  color: var(--paper);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 16px 40px;
+  border-radius: var(--r);
+  border: 2px solid var(--teal);         /* teal border matches fill */
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.18s, border-color 0.18s, transform 0.12s;
+}
+.btn-primary:hover {
+  background: var(--teal-deep);          /* deeper teal on hover — 7.3:1 on white */
+  border-color: var(--teal-deep);
+  transform: translateY(-1px);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 16px 40px;
+  border-radius: var(--r);
+  border: 1px solid var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.btn-ghost:hover {
+  background: var(--teal);               /* teal hover to match primary family */
+  border-color: var(--teal);
+  color: var(--paper);                     /* 5.06:1 contrast — AA for normal text */
+}
+
+.btn-outline-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border-radius: var(--r);
+  border: 1.5px solid var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  min-height: 40px;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.btn-outline-sm:hover {
+  background: var(--teal);
+  color: var(--paper);
+  border-color: var(--teal);
+}
+
+/* ─────────────────────────────────
+   PRIVACY BANNER
+───────────────────────────────── */
+#privacy-banner {
+  background: var(--bone);
+  border-bottom: 1px solid var(--border);
+  padding: 8px var(--pad-h);
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────
+   FLOATING CTA
+   (Replaces the top nav on this one-pager. Always-available "Sign Now"
+   anchor for users deep in the page.)
+───────────────────────────────── */
+.floating-cta {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--teal);               /* teal pill — same signal as hero CTA */
+  color: var(--paper);
+  padding: 14px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  transition: background 0.18s, transform 0.12s;
+}
+.floating-cta:hover {
+  background: var(--teal-deep);          /* deeper teal on hover */
+  transform: translateY(-1px);
+  color: var(--paper);
+}
+@media (max-width: 600px) {
+  .floating-cta { bottom: 12px; right: 12px; font-size: 12px; padding: 12px 18px; }
+}
+
+/* ─────────────────────────────────
+   HERO
+───────────────────────────────── */
+#hero {
+  padding: 64px 0 56px;       /* tightened from 96/88 — pulls hero closer to the page top */
+  background: var(--paper);
+  background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+  background-size: 22px 22px;         /* matches .dots-light — same rhythm as story/testimonials */
+}
+#hero .inner { text-align: center; }
+
+.hero-headline {
+  font-optical-sizing: auto;
+  font-family: var(--font-display);
+  font-size: clamp(40px, 6.4vw, 76px);  /* bumped up — per Sam */
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-bottom: 8px;
+  font-variation-settings: "opsz" 144;
+  /* Prevent the trailing "in." from orphaning to its own line. text-wrap: balance
+     distributes lines evenly across the headline. nbsp glue between "investing"
+     and "in." is the belt-and-suspenders fallback for browsers that don't yet
+     support text-wrap (Firefox < 121, older Safari). pretty kicks in on browsers
+     that support it as a finer-grained orphan guard. */
+  text-wrap: balance;
+  text-wrap: pretty;
+  max-width: 18ch;             /* keeps the headline from sprawling on wide viewports */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-logo-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 24px auto;
+  text-align: center;
+}
+
+.hero-logo-wrap img,
+.hero-logo-wrap svg {
+  width: 144px;
+  height: 144px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+}
+
+.hero-subhead {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 400;
+  line-height: 1.08;
+  color: var(--ink);
+  margin-bottom: 8px;
+  font-variation-settings: "opsz" 120;
+  /* italic removed per Beth — no font-style declared, inherits normal */
+}
+
+.hero-actions {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0 auto 24px;
+  /* Belt-and-suspenders centering — the row stays centered even if a media
+     query overrides justify-content somewhere downstream, because the
+     container itself is shrunk to its content and auto-margined. The 480px
+     media re-expands width to 100% so stacked buttons can still stretch. */
+  width: fit-content;
+  max-width: 100%;
+  text-align: center;
+}
+
+.hero-count {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 16px;
+}
+
+
+
+/* Constrained prose column — left-aligned to the inner grid so its left edge
+   matches every other section's left edge (fixes pink-line mismatch Sam called out). */
+.prose-col {
+  max-width: var(--prose-max);
+  margin-left: 0;
+  margin-right: auto;
+}
+/* Hero gets a centered version (it's a centered hero composition). */
+#hero .prose-col { margin-left: auto; }
+
+/* ─────────────────────────────────
+   STORY — WHO WE ARE
+   Single-column narrative (Who we are / Where we've been / What's next) paired
+   with a stat card sidebar. Desktop: 2/3 copy + 1/3 stats. ≤1024px: stacks.
+───────────────────────────────── */
+.story-intro-grid {
+  margin-bottom: 0;
+}
+.story-intro-copy {
+  max-width: var(--prose-max);       /* narrow prose on mobile/tablet */
+  margin-bottom: 40px;               /* breathing room before stacked stats below */
+}
+.story-intro-copy > .story-lead {
+  margin-bottom: 48px;               /* intro paragraph flows into first subsection */
+}
+.story-intro-copy .story-subsection {
+  margin-bottom: 48px;
+}
+.story-intro-copy .story-subsection:last-child {
+  margin-bottom: 0;
+}
+
+.story-who {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin: 0;                         /* flow handled by .story-intro-grid */
+  max-width: var(--prose-max);       /* mobile/tablet cap */
+}
+
+/* Desktop: 2/3 copy + 1/3 stat sidebar. */
+@media (min-width: 1025px) {
+  .story-intro-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;  /* per request — 2/3 text, 1/3 boxes */
+    gap: 64px;
+    align-items: start;
+  }
+  .story-intro-copy {
+    max-width: none;                 /* fill the 2/3 column */
+    margin-bottom: 0;
+  }
+  .story-intro-grid .story-who {
+    grid-template-columns: 1fr;      /* stats stack vertically as a sidebar card */
+    max-width: none;
+    position: sticky;
+    top: 32px;                       /* sticks near top as the prose scrolls past */
+  }
+}
+
+.story-who-stat {
+  background: var(--night);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: background 0.2s;
+}
+.story-who-stat:hover { background: color-mix(in oklab, var(--night), var(--paper) 12%); }
+
+.story-stat-num {
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 3vw, 40px);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--paper);
+  font-variation-settings: "opsz" 60;
+}
+
+.story-stat-label {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+
+@media (max-width: 600px) {
+  .story-who { grid-template-columns: 1fr; }
+}
+
+/* ─────────────────────────────────
+   OUR STORY — full-bleed bone background with subtle dots for section transition
+───────────────────────────────── */
+#story {
+  background: var(--bone);
+  background-image: radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.story-subsection {
+  margin-bottom: 48px;
+}
+
+.story-subsection:last-child {
+  margin-bottom: 0;
+}
+
+.story-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.2vw, 40px);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 16px;
+  font-variation-settings: "opsz" 72;
+}
+
+/* ─────────────────────────────────
+   DEMANDS — dark band
+───────────────────────────────── */
+#demands {
+  background: var(--night);
+  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.demands-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.demands-intro-text {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.72);
+  margin-bottom: 24px;
+}
+.demands-intro-text p + p { margin-top: 14px; }
+.demands-intro-text strong { color: var(--paper); font-weight: 700; }
+
+/* Simplified list: no "1." column, no "Demand 1:" prefix. Each item is
+   a strong title + supporting description. */
+.demand-list { list-style: none; margin-top: 24px; }
+
+.demand-item {
+  padding: 22px 0 22px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  border-left: 3px solid transparent;   /* reserve space so hover doesn't shift layout */
+  padding-left: 0;
+  transition: padding-left 0.2s, border-left-color 0.2s, border-bottom-color 0.2s;
+}
+.demand-item:first-child { border-top: 1px solid rgba(255,255,255,0.12); }
+.demand-item:hover {
+  padding-left: 14px;
+  border-left-color: var(--teal);     /* teal rail on hover — a little life */
+  border-bottom-color: var(--teal);
+}
+
+.demand-title {
+  font-family: var(--font-ui);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--paper);
+  margin-bottom: 8px;
+  line-height: 1.15;
+}
+
+.demand-desc {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.55;
+}
+
+.demands-aside {
+  position: sticky;
+  top: 80px;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: var(--r);
+  padding: 2rem;
+  background: rgba(255,255,255,0.06);
+}
+
+.pull-quote-text {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.75;
+  color: var(--paper);
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--teal);   /* teal rail on the quote */
+}
+
+.pull-quote-attr {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+}
+
+/* ─────────────────────────────────
+   TESTIMONIALS — bone band, same inner grid as everything else
+───────────────────────────────── */
+#testimonials {
+  background: var(--bone);
+  background-image: radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.t-intro {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: end;
+  margin-bottom: 32px;
+}
+
+.t-intro-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.t-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;                 /* real breathing room instead of a 1px seam */
+}
+
+.t-card {
+  background: var(--paper);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 6px;        /* a touch more rounded than global --r for card-like feel */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  position: relative;
+}
+.t-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.10);
+  border-color: var(--teal);
+  z-index: 1;
+}
+
+.t-card.featured {
+  grid-column: span 2;
+  background: var(--paper);
+  border-top: 4px solid var(--teal);   /* teal ribbon — marks the featured voice */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+.t-card.featured:hover {
+  border-top-color: var(--teal);       /* keep the ribbon on hover */
+  border-color: var(--teal);
+}
+
+.t-quote {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--muted);
+  flex: 1;
+  margin-bottom: 24px;
+}
+
+.t-card.featured .t-quote {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2vw, 24px);
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--ink);
+  font-variation-settings: "opsz" 48;
+}
+
+.t-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.t-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--night), var(--paper) 12%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--paper);
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.t-card:hover .t-avatar { background: var(--teal); }
+
+.t-name {
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.t-role {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.t-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+/* ─────────────────────────────────
+   PETITION — white band between dark "demands" and bone "voices"
+───────────────────────────────── */
+#petition {
+  background: var(--paper);
+}
+
+.petition-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.petition-counter {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+  margin: 32px 0;
+}
+
+.counter-num {
+  font-family: var(--font-serif);
+  font-size: clamp(48px, 6vw, 72px);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--teal);            /* teal — the single brightest accent on the page */
+  margin-bottom: 4px;
+  font-variation-settings: "opsz" 60;
+}
+
+.counter-label {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.progress-track {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 41.5%;   /* 166 / 400 — starting signatures from initial mgmt letter */
+  background: var(--teal);
+  transition: width 0.4s;
+}
+
+.progress-goals {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.form-box {
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--paper);
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.form-hdr {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.form-hdr::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.petition-privacy-note {
+  margin-bottom: 20px;
+  padding: 12px;
+  background: var(--bone);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.petition-privacy-note a { color: var(--ink); text-decoration: underline; }
+
+.f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.f-field { margin-bottom: 1rem; }
+
+.f-label {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+
+.f-input {
+  width: 100%;
+  font-family: var(--font-ui);
+  font-size: 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--bone);
+  color: var(--muted);
+  outline: none;
+}
+.f-input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(30,79,163,0.12);
+}
+
+textarea.f-input {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.f-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 16px 0 20px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.f-consent input { margin-top: 2px; flex-shrink: 0; }
+
+.btn-submit {
+  width: 100%;
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--teal);               /* petition submit — teal to match hero CTA */
+  color: var(--paper);
+  border: 2px solid var(--teal);
+  padding: 16px;
+  border-radius: var(--r);
+  cursor: pointer;
+  line-height: 1;
+  margin-bottom: 10px;
+  transition: background 0.18s, border-color 0.18s;
+}
+.btn-submit:hover {
+  background: var(--teal-deep);          /* deeper teal on hover — AAA contrast with white */
+  border-color: var(--teal-deep);
+}
+
+.form-footnote {
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.an-note {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-left: 3px solid color-mix(in oklab, var(--night), var(--paper) 12%);
+  background: var(--bone);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-radius: 0 var(--r) var(--r) 0;
+}
+
+/* ─────────────────────────────────
+   SHARE / CONTACT — bright-gray band
+───────────────────────────────── */
+#share {
+  background: color-mix(in oklab, var(--night), var(--paper) 12%);
+  background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.share-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.share-title {
+  font-family: var(--font-serif);
+  font-size: clamp(24px, 3vw, 40px);
+  font-weight: 400;
+  color: var(--paper);
+  margin-bottom: 16px;
+  line-height: 1.25;
+  font-variation-settings: "opsz" 60;
+}
+
+.share-sub {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: rgba(255,255,255,0.55);
+  line-height: 24px;
+  margin-bottom: 32px;
+}
+
+.share-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.share-btn {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.3);
+  background: transparent;
+  padding: 10px 18px;
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+}
+.share-btn:hover {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--paper);
+}
+
+.contact-box {
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: var(--r);
+  padding: 2.5rem;
+}
+
+.contact-label {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 1rem;
+}
+
+.contact-body {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: rgba(255,255,255,0.5);
+  line-height: 24px;
+  margin-bottom: 16px;
+}
+
+.contact-email {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  color: var(--paper);
+}
+
+/* ─────────────────────────────────
+   FOOTER
+───────────────────────────────── */
+footer {
+  background: var(--ink);
+  padding: 32px var(--pad-h);
+}
+
+.footer-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.footer-item {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+}
+
+.footer-privacy {
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: rgba(255,255,255,0.2);
+  line-height: 24px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 16px;
+}
+.footer-privacy a { color: rgba(255,255,255,0.35); text-decoration: underline; }
+
+/* ─────────────────────────────────
+   PRIVACY MODAL
+───────────────────────────────── */
+#privacy-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0,0,0,0.72);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+#privacy-modal.open { display: flex; }
+
+.privacy-modal-box {
+  background: var(--paper);
+  border-radius: var(--r);
+  max-width: 680px;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 48px;
+  position: relative;
+}
+
+.privacy-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 8px;
+}
+.privacy-modal-close:hover { color: var(--ink); }
+
+.privacy-modal-box h2 {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: 8px;
+  font-variation-settings: "opsz" 60;
+}
+.privacy-modal-box .pm-date {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 32px;
+  display: block;
+}
+.privacy-modal-box h3 {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 24px 0 8px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.privacy-modal-box h3:first-of-type { border-top: none; margin-top: 0; }
+.privacy-modal-box p {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.privacy-modal-box a { color: var(--ink); }
+
+
+/* ─────────────────────────────────
+   VIEWPORT TOGGLE TOOLBAR
+───────────────────────────────── */
+#wf-toolbar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #18191c;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 9999;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  font-family: var(--font-ui);
+}
+#wf-label { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.25); padding: 0 4px; }
+#wf-div { width: 1px; height: 16px; background: rgba(255,255,255,0.1); margin: 0 2px; }
+.wf-btn {
+  display: flex; align-items: center; gap: 5px;
+  background: transparent; border: 1px solid transparent; border-radius: 6px;
+  color: rgba(255,255,255,0.4); font-family: var(--font-ui); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 10px; cursor: pointer; transition: all 0.12s; white-space: nowrap;
+}
+.wf-btn:hover { color: rgba(255,255,255,0.75); background: rgba(255,255,255,0.07); }
+.wf-btn.active { color: #fff; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+#vp-shell { display: none; position: fixed; inset: 0; background: #0c0c0e; z-index: 9990; align-items: center; justify-content: center; padding-bottom: 68px; }
+#vp-shell.on { display: flex; }
+#vp-wrap { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 32px 80px rgba(0,0,0,0.7); transition: width 0.28s cubic-bezier(.4,0,.2,1), height 0.28s cubic-bezier(.4,0,.2,1); background: #fff; display: flex; flex-direction: column; }
+#vp-notch { display: none; background: #18191c; height: 26px; align-items: center; justify-content: center; flex-shrink: 0; }
+#vp-notch::after { content: ''; width: 72px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 3px; }
+#vp-notch.on { display: flex; }
+#vp-frame { flex: 1; border: none; width: 100%; display: block; }
+#vp-lbl { position: absolute; top: -26px; left: 50%; transform: translateX(-50%); font-family: var(--font-ui); font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); white-space: nowrap; }
+
+/* ─────────────────────────────────
+   RESPONSIVE — all breakpoints collapse the same way because every section
+   now rides the same .inner grid.
+───────────────────────────────── */
+/* TABLET + DOWN: narrow rails, stack the two-column grids, keep centering. */
+@media (max-width: 1024px) {
+  /* Tablet: side padding bumped from 48 → 96 so EVERY section (Hero, Story,
+     Demands, Petition, Voices, Share) shares the same content rail. This is
+     the grid-consistency rule — all sections align to the same left/right
+     edges at tablet, and forms / 2-col cards / stat tiles read as contained
+     units rather than full-bleed bands. Mobile (≤640) re-narrows to 20px. */
+  :root { --pad-h: 96px; }
+  section { padding: 64px 0; }
+  .demands-layout { grid-template-columns: 1fr; gap: 48px; }
+  .petition-layout { grid-template-columns: 1fr; gap: 48px; }
+  .share-inner { grid-template-columns: 1fr; gap: 2rem; }
+  .t-intro { grid-template-columns: 1fr; gap: 1rem; align-items: start; }
+  .t-intro-right { align-items: flex-start; }
+  .t-grid { grid-template-columns: 1fr 1fr; }
+  .t-card.featured { grid-column: span 2; }
+  .f-row { grid-template-columns: 1fr; }
+  .form-box { padding: 1.6rem; }
+  /* Hero stays centered at tablet widths — this addresses the tablet
+     preview issue where the buttons were left-aligned. */
+  #hero .inner { text-align: center; }
+  .hero-logo-wrap { justify-content: center; margin-left: auto; margin-right: auto; }
+  .hero-actions { justify-content: center; gap: 16px; }
+}
+
+/* MOBILE: single-column everywhere, hero stays centered (was left-aligned
+   in an earlier draft — Beth wants centered on every break). */
+@media (max-width: 640px) {
+  :root { --pad-h: 20px; }   /* phones — narrow viewports, --pad-h shrinks back so content has breathing room */
+  section { padding: 52px 0; }
+  #hero { padding: 56px 0 48px; }
+  #hero .inner { text-align: center; }
+  .hero-logo-wrap { justify-content: center; margin-left: auto; margin-right: auto; }
+  .hero-actions { gap: 12px; justify-content: center; }
+  .t-grid { grid-template-columns: 1fr; }
+  .t-card.featured { grid-column: span 1; }
+  .t-card { padding: 1.5rem; }
+  .share-btns { flex-direction: column; }
+  .share-btn { text-align: center; padding: 13px; }
+  .footer-main { gap: 16px; }
+  footer { padding: 24px var(--pad-h); }
+  .counter-num { font-size: clamp(40px, 10vw, 56px); }
+  .privacy-modal-box { padding: 32px 24px; }
+  .f-input { font-size: 16px; }   /* prevent iOS zoom on focus */
+}
+
+@media (max-width: 480px) {
+  /* Stacked column: re-expand the container to full width so buttons can
+     stretch end-to-end (otherwise width: fit-content from base would clamp
+     the column to a single button's natural width). */
+  .hero-actions { flex-direction: column; align-items: stretch; width: 100%; }
+  .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 380px) {
+  :root { --pad-h: 16px; }
+  .hero-headline { font-size: 38px; }
+  .hero-subhead { font-size: 26px; }
+  .t-h1 { font-size: 30px; }
+}
+
+
+</style>
+</head>
+<body>
+
+
+<div id="privacy-banner">
+  This is a union organizing campaign page. Information submitted is used solely for campaign purposes. This site uses Google Analytics. <button onclick="openPrivacy()" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;font-weight:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;text-decoration:underline;padding:0;">Privacy Policy</button>
+</div>
+
+
+<a href="#petition" class="floating-cta" aria-label="Jump to the petition to sign">Sign Now</a>
+
+
+<section id="hero">
+  <div class="inner">
+  <div class="prose-col" style="margin:0 auto;text-align:center;">
+  <h1 class="hero-headline">The Inquirer is worth investing&nbsp;in.</h1>
+  <div class="hero-logo-wrap">
+    <svg class="hero-logo" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NewsGuild of Greater Philadelphia — Local 38010">
+  <path d="M1020.667,512.792c0,37.627-33.852,70.943-41.854,106.148-8.263,36.351,7.585,81.015-8.238,113.811-16.083,33.337-61.049,48.706-83.914,77.341s-28.034,75.995-56.809,98.972c-28.635,22.865-75.758,17.367-109.096,33.45-32.796,15.822-57.775,56.248-94.126,64.511-35.205,8.002-75.17-17.399-112.797-17.399s-77.592,25.402-112.797,17.399c-36.351-8.263-61.33-48.689-94.126-64.511-33.337-16.083-80.461-10.585-109.096-33.451s-33.832-70.197-56.809-98.972-67.83-44.004-83.914-77.341c-15.822-32.796.025-77.459-8.237-113.811-8.002-35.205-41.854-68.521-41.854-106.148s33.852-70.943,41.854-106.148c8.263-36.351-7.585-81.015,8.238-113.811,16.083-33.337,61.049-48.706,83.914-77.341,22.977-28.775,28.034-75.995,56.809-98.972,28.635-22.865,75.758-17.367,109.096-33.45,32.796-15.822,57.775-56.248,94.126-64.511,35.205-8.002,75.17,17.399,112.797,17.399s77.592-25.402,112.797-17.399c36.351,8.263,61.33,48.689,94.126,64.511,33.337,16.083,80.461,10.585,109.096,33.451,28.775,22.977,33.832,70.197,56.809,98.972s67.83,44.004,83.914,77.341c15.822,32.796-.025,77.459,8.237,113.811,8.002,35.205,41.854,68.521,41.854,106.148Z" fill="#222"/>
+  <path d="M513.834,88.476c57.288,0,112.855,11.217,165.159,33.34,50.526,21.371,95.905,51.967,134.878,90.939s69.569,84.352,90.939,134.877c22.123,52.304,33.34,107.872,33.34,165.159s-11.217,112.855-33.34,165.159c-21.371,50.526-51.967,95.905-90.939,134.878s-84.352,69.569-134.878,90.939c-52.304,22.123-107.872,33.34-165.159,33.34s-112.855-11.217-165.159-33.34c-50.526-21.371-95.905-51.967-134.878-90.939s-69.569-84.352-90.939-134.878c-22.123-52.304-33.34-107.872-33.34-165.159s11.217-112.855,33.34-165.159c21.371-50.526,51.967-95.905,90.939-134.877s84.352-69.569,134.878-90.939c52.304-22.123,107.872-33.34,165.159-33.34M513.834,76.476c-240.971,0-436.316,195.345-436.316,436.316s195.345,436.316,436.316,436.316,436.316-195.345,436.316-436.316S754.804,76.476,513.834,76.476h0Z" fill="#fff"/>
+  <path d="M513.834,105.481c54.989,0,108.33,10.768,158.542,32.006,48.502,20.514,92.062,49.884,129.47,87.292,37.408,37.408,66.778,80.968,87.292,129.47,21.238,50.212,32.006,103.553,32.006,158.542s-10.768,108.33-32.006,158.542c-20.514,48.502-49.884,92.062-87.292,129.47s-80.968,66.778-129.47,87.292c-50.212,21.238-103.553,32.006-158.542,32.006s-108.33-10.768-158.542-32.006c-48.502-20.514-92.062-49.884-129.47-87.292s-66.778-80.968-87.292-129.47c-21.238-50.212-32.006-103.553-32.006-158.542s10.768-108.33,32.006-158.542c20.514-48.502,49.884-92.062,87.292-129.47,37.408-37.408,80.968-66.778,129.47-87.292,50.212-21.238,103.553-32.006,158.542-32.006M513.834,100.481c-227.713,0-412.311,184.598-412.311,412.311s184.598,412.311,412.311,412.311,412.311-184.598,412.311-412.311S741.547,100.481,513.834,100.481h0Z" fill="#fff"/>
+  <path d="M594.295,587.964l-4.018-2.445c-3.132,7.493-7.508,11.068-7.508,11.068-10.356,9.016-20.084,8.449-36.011,5.621-.777-.139-1.504-.284-2.211-.438.652-1.021,1.304-2.151,1.942-3.396,2.121-4.137,3.769-9.295,4.202-13.871.513-5.397.612-9.957.612-9.957l1.001-36.534.274-44.834.01-66.894,1.22-.274c26.711-7.04,40.492-40.303,40.492-40.303l-4.018-2.445c-3.132,7.493-7.508,11.068-7.508,11.068-10.356,9.017-20.084,8.449-36.011,5.621-4.605-.817-7.886-1.907-11.61-3.042-5.193-1.588-8.13-2.579-8.13-2.579-17.112-5.621-24.764-6.363-24.764-6.363-8.673-1.12-13.836-1.13-16.813-.712-2.589.363-3.824.712-3.824.712-12.885,3.391-22.638,11.297-29.987,19.213-13.303,14.334-18.267,30.589-18.267,30.589l3.779,2.295c1.055-2.44,2.151-4.63,3.291-6.662,2.932-5.243,6.208-9.285,9.191-12.029,4.441-4.083,8.11-5.506,8.11-5.506,2.181-1.135,4.929-1.877,8.026-2.196,6.886-.712,17.988.762,26.975,2.599,4.814.986,9.012,2.091,11.65,2.838l-42.145,31.316,3.53,3.719,5.417-3.948s3.465,1.484,3.181,30.694l-.115,82.423-1.319.901-10.714,7.802,3.54,3.729,4.541-3.306,19.81,16.813s-.025.005-.03.01c-1.937-.01-3.465.085-4.64.249-2.589.363-3.824.712-3.824.712-12.885,3.391-22.638,11.297-29.987,19.213-13.303,14.334-18.267,30.589-18.267,30.589l3.779,2.295c1.055-2.44,2.151-4.63,3.291-6.662,2.932-5.243,6.208-9.285,9.191-12.029,4.441-4.083,8.11-5.506,8.11-5.506,2.181-1.135,4.929-1.877,8.026-2.196,6.886-.712,17.988.762,26.975,2.599,8.16,1.673,14.573,3.699,14.573,3.699,21.842,6.472,34.338,11.78,53.133,3.664,21.862-9.44,33.85-37.928,33.85-37.928h0ZM490.15,589.258l23.699-19.347-5.412-4.879c-4.939-4.939-4.76-11.242-4.76-11.242v-127.989l6.433-4.944,3.122.991s2.848.782,6.816,1.807v151.901c.149,10.401-.752,16.051-1.289,18.466-11.332-3.296-16.505-3.804-16.505-3.804-5.073-.657-8.912-.926-11.849-.956-.149-.005-.254-.005-.254-.005h0Z" fill="#fff"/>
+  <g>
+    <polyline points="653.801 528.443 669.451 512.792 653.801 497.142" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <polyline points="634.259 528.443 618.609 512.792 634.259 497.142" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  </g>
+  <g>
+    <line x1="395.498" y1="497.142" x2="388.053" y2="504.587" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="5"/>
+    <line x1="371.642" y1="520.998" x2="364.198" y2="528.443" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="5"/>
+    <line x1="395.498" y1="528.443" x2="388.053" y2="520.998" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="5"/>
+    <line x1="371.642" y1="504.587" x2="364.198" y2="497.142" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="5"/>
+  </g>
+  <g>
+    <path d="M231.897,737.404l-9.361-13.759,33.035-51.118-46.356,31.539-9.288-13.653,78.424-53.356,9.36,13.759-33.034,51.118,46.355-31.539,9.289,13.653-78.424,53.356Z" fill="#fff"/>
+    <path d="M305.549,733.611l23.853,21.332-11.007,12.308-23.854-21.331-15.018,16.792,23.854,21.332-11.093,12.403-36.161-32.339,63.228-70.701,36.161,32.339-11.093,12.404-23.853-21.332-15.018,16.793Z" fill="#fff"/>
+    <path d="M389.017,850.104l-16.199-7.355,13.706-53.099-30.955,45.268-16.2-7.356,23.012-93.716,15.151,6.879-15.272,58.714,33.57-50.406,15.15,6.88-15.854,58.449,34.152-50.142,15.151,6.88-55.412,79.005Z" fill="#fff"/>
+    <path d="M464.156,850.719c6.339.888,11.435-2.276,12.198-7.728,1.153-8.24-12.238-13.217-21.909-20.775-6.894-5.23-12.856-14.337-11.26-25.746,2.183-15.593,16.475-25.354,31.813-23.207,15.593,2.183,26.495,16.634,24.312,32.227l-16.354-2.289c.525-6.519-3.8-12.553-10.266-13.458-6.465-.904-11.219,1.661-12.106,8-.993,7.099,10.281,12.426,19.315,18.989,7.837,5.88,15.772,14.746,13.98,27.55-2.147,15.339-16.439,25.101-32.032,22.918-15.339-2.147-26.241-16.599-24.076-32.064l16.353,2.289c-.633,6.374,3.692,12.408,10.03,13.295Z" fill="#fff"/>
+    <path d="M604.551,830.381c3.047,15.315-7.009,30.367-22.449,33.439-15.315,3.047-30.366-7.009-33.414-22.323l-7.394-37.158c-3.072-15.441,6.983-30.492,22.299-33.54,15.44-3.072,30.491,6.983,33.564,22.424l-16.194,3.223c-1.399-6.377-7.821-10.45-14.099-9.201-6.402,1.274-10.575,7.847-9.376,13.872l7.394,37.158c1.374,6.252,7.821,10.45,13.973,9.227,6.503-1.425,10.751-7.621,9.502-13.897l-1.873-9.415-11.801,2.348-3.247-16.319,27.994-5.57,5.121,25.734Z" fill="#fff"/>
+    <path d="M678.49,799.341c6.611,14.007.5,31.046-13.737,37.767-14.006,6.612-31.046.501-37.657-13.505l-28.632-60.655,14.932-7.049,28.633,60.655c3.339,6.774,10.004,8.299,15.676,5.622,5.849-2.902,8.531-10.114,5.854-15.786l-28.632-60.654,14.932-7.049,28.633,60.654Z" fill="#fff"/>
+    <path d="M659.89,730.532l13.453-9.793,55.821,76.683-13.453,9.793-55.821-76.683Z" fill="#fff"/>
+    <path d="M786.818,743.586l-33.938,34.848-67.953-66.179,11.61-11.921,56.032,54.567,22.327-22.926,11.922,11.61Z" fill="#fff"/>
+    <path d="M733.303,655.073c8.586-13.195,26.296-16.943,39.491-8.356l31.757,20.663c13.089,8.517,16.836,26.227,8.25,39.422l-15.429,23.71-79.497-51.729,15.428-23.71ZM798.854,697.727c3.453-5.541,2.056-13.017-3.309-16.507l-31.756-20.663c-5.648-3.523-12.979-1.88-16.54,3.592l-6.353,9.763,51.604,33.578,6.353-9.763Z" fill="#fff"/>
+  </g>
+  <g>
+    <path d="M250.881,272.937l11.544-11.986,68.313,65.804-11.544,11.984-68.313-65.802Z" fill="#fff"/>
+    <path d="M387.979,282.896l-13.688,9.461-51.354-32.657,31.873,46.119-13.582,9.388-53.923-78.023,13.688-9.46,51.353,32.655-31.872-46.118,13.583-9.388,53.923,78.023Z" fill="#fff"/>
+    <path d="M440.689,232.851c2.752,7.58,1.992,15.617-1.434,22.308,5.422,2.934,9.925,7.835,12.196,14.09l-15.279,5.548c-1.954-5.01-6.021-7.209-10.658-6.479l-2.002.863c-14.558,5.284-30.956-2.378-36.241-16.937l-13.322-36.694c-5.415-14.918,2.248-31.317,16.806-36.603,14.797-5.372,31.196,2.292,36.613,17.21l13.321,36.694ZM402.791,246.609c2.697,7.055,9.191,9.189,15.087,7.051,6.092-2.349,9.432-9.279,7.291-15.175l-13.322-36.694c-2.348-6.093-9.398-9.388-15.414-7.204-5.972,2.304-9.146,9.312-6.962,15.327l13.32,36.695Z" fill="#fff"/>
+    <path d="M510.842,224.004c1.565,15.408-9.874,29.437-25.537,31.028-15.407,1.565-29.436-9.875-31.002-25.282l-6.78-66.726,16.426-1.67,6.781,66.726c.892,7.5,6.666,11.158,12.905,10.524,6.482-.787,11.415-6.691,10.78-12.932l-6.78-66.726,16.427-1.669,6.78,66.726Z" fill="#fff"/>
+    <path d="M534.693,158.943l16.578,1.439-8.205,94.495-16.578-1.44,8.205-94.494Z" fill="#fff"/>
+    <path d="M581.938,226.903l-9.35,33.14-16.016-4.518,25.756-91.288,27.226,7.681c15.276,4.311,24.12,20.105,19.845,35.259l-.974,3.449c-2.989,10.595-11.756,18.097-21.999,19.994l5.585,40.546-18.356-5.179-5.188-37.242-6.529-1.842ZM586.422,211.012l11.212,3.162c6.316,1.649,13.074-2.03,14.777-8.066l.974-3.449c1.684-6.441-2.065-12.952-8.349-14.725l-11.21-3.163-7.404,26.241Z" fill="#fff"/>
+    <path d="M662.656,235.641l27.768,15.903-8.206,14.327-27.767-15.903-11.196,19.547,27.766,15.904-8.27,14.438-42.094-24.109,47.139-82.299,42.094,24.11-8.27,14.438-27.766-15.904-11.198,19.548Z" fill="#fff"/>
+    <path d="M709.426,294.573l-24.005,24.686-11.93-11.601,66.124-68.001,20.281,19.722c11.38,11.065,11.632,29.166.656,40.454l-2.499,2.569c-7.674,7.892-18.955,10.313-28.866,7.102l-14.4,38.311-13.674-13.296,13.177-35.216-4.864-4.729ZM720.937,282.735l8.352,8.12c4.77,4.46,12.464,4.442,16.836-.054l2.499-2.569c4.549-4.861,4.354-12.373-.327-16.923l-8.352-8.121-19.008,19.547Z" fill="#fff"/>
+  </g>
+  <path d="M513.834,305.476c27.99,0,55.14,5.481,80.695,16.29,24.686,10.442,46.858,25.391,65.899,44.432,19.041,19.041,33.99,41.213,44.432,65.899,10.809,25.556,16.29,52.706,16.29,80.695s-5.481,55.14-16.29,80.695c-10.442,24.686-25.391,46.858-44.432,65.899-19.041,19.041-41.213,33.99-65.899,44.432-25.556,10.809-52.706,16.29-80.695,16.29s-55.14-5.481-80.695-16.29c-24.686-10.442-46.858-25.391-65.899-44.432-19.041-19.041-33.99-41.213-44.432-65.899-10.809-25.556-16.29-52.706-16.29-80.695s5.481-55.14,16.29-80.695c10.442-24.686,25.391-46.858,44.432-65.899,19.041-19.041,41.213-33.99,65.899-44.432,25.556-10.809,52.706-16.29,80.695-16.29M513.834,300.476c-117.259,0-212.316,95.057-212.316,212.316s95.057,212.316,212.316,212.316,212.316-95.057,212.316-212.316-95.057-212.316-212.316-212.316h0Z" fill="#fff"/>
+  <g>
+    <path d="M155.388,533.693h-22.04v-42.977h7.54v35.437h14.5v7.54Z" fill="#fff"/>
+    <path d="M186.823,503.418v17.689c0,7.018-5.8,12.818-12.934,12.818-7.018,0-12.817-5.801-12.817-12.818v-17.689c0-7.191,5.8-12.991,12.817-12.991,7.134,0,12.934,5.8,12.934,12.991ZM179.342,521.107v-17.689c-.059-2.958-2.553-5.452-5.452-5.452-2.9.059-5.336,2.553-5.336,5.452v17.689c.058,3.422,2.494,5.336,5.336,5.336,2.958-.058,5.452-2.494,5.452-5.336Z" fill="#fff"/>
+    <path d="M211.415,503.418c-.058-2.958-2.494-5.452-5.394-5.452-2.9.059-5.336,2.553-5.336,5.452v17.689c.058,3.422,2.494,5.336,5.336,5.336,2.958-.058,5.394-2.494,5.394-5.336v-4.35h7.54v4.35c0,7.018-5.8,12.818-12.934,12.818-7.018,0-12.817-5.801-12.817-12.818v-17.689c0-7.191,5.8-12.991,12.817-12.991,7.134,0,12.934,5.8,12.934,12.991v4.234h-7.54v-4.234Z" fill="#fff"/>
+    <path d="M232.875,522.964l-2.609,10.729h-7.54l10.498-42.977h10.207l10.498,42.977h-7.54l-2.609-10.729h-10.904ZM238.327,500.692l-3.712,15.312h7.481l-3.77-15.312Z" fill="#fff"/>
+    <path d="M281.479,533.693h-22.04v-42.977h7.54v35.437h14.5v7.54Z" fill="#fff"/>
+  </g>
+  <g>
+    <path d="M762.038,508.521c2.437-.058,5.046-2.088,5.046-4.871,0-3.132-2.262-5.395-5.394-5.395-2.899,0-4.872,2.727-4.872,5.395h-8.119c0-7.192,5.8-12.992,12.991-12.992,7.134,0,12.934,5.8,12.934,12.992,0,3.306-1.218,6.38-3.306,8.699,2.088,2.204,3.306,5.278,3.306,8.642,0,7.134-5.8,12.935-12.934,12.935-7.191,0-12.991-5.801-12.991-12.935h7.539c0,2.668,2.437,5.336,5.452,5.336,3.19,0,5.394-2.262,5.394-5.336,0-2.842-2.668-4.93-5.046-4.93h-3.247v-7.54h3.247Z" fill="#fff"/>
+    <path d="M781.585,503.65c0-7.134,5.8-12.992,12.991-12.992,7.134,0,12.934,5.858,12.934,12.992,0,3.363-1.218,6.38-3.306,8.699,2.088,2.204,3.306,5.278,3.306,8.642,0,7.134-5.8,12.935-12.934,12.935-7.191,0-12.991-5.801-12.991-12.935,0-3.363,1.218-6.438,3.247-8.642-2.029-2.319-3.247-5.336-3.247-8.699ZM789.124,503.65c0,2.958,2.437,5.394,5.452,5.394,2.9,0,5.394-2.494,5.394-5.394,0-2.842-2.552-5.336-5.394-5.336-2.9,0-5.452,2.436-5.452,5.336ZM789.124,520.991c0,2.958,2.437,5.336,5.452,5.336,2.9,0,5.394-2.493,5.394-5.336s-2.436-5.451-5.394-5.451c-2.9,0-5.452,2.436-5.452,5.451Z" fill="#fff"/>
+    <path d="M839.932,503.418v17.689c0,7.018-5.8,12.818-12.934,12.818-7.018,0-12.817-5.801-12.817-12.818v-17.689c0-7.191,5.8-12.991,12.817-12.991,7.134,0,12.934,5.8,12.934,12.991ZM832.45,521.107v-17.689c-.059-2.958-2.553-5.452-5.452-5.452-2.9.059-5.336,2.553-5.336,5.452v17.689c.058,3.422,2.494,5.336,5.336,5.336,2.958-.058,5.452-2.494,5.452-5.336Z" fill="#fff"/>
+    <path d="M845.442,526.153h9.105v-27.897h-9.105v-7.539h16.646v35.437h9.105v7.54h-25.751v-7.54Z" fill="#fff"/>
+    <path d="M900.135,503.418v17.689c0,7.018-5.8,12.818-12.934,12.818-7.018,0-12.817-5.801-12.817-12.818v-17.689c0-7.191,5.8-12.991,12.817-12.991,7.134,0,12.934,5.8,12.934,12.991ZM892.653,521.107v-17.689c-.059-2.958-2.553-5.452-5.452-5.452-2.9.059-5.336,2.553-5.336,5.452v17.689c.058,3.422,2.494,5.336,5.336,5.336,2.958-.058,5.452-2.494,5.452-5.336Z" fill="#fff"/>
+  </g>
+</svg>
+  </div>
+  <p class="hero-subhead">So are its workers.</p>
+  <div class="hero-actions">
+    <a href="#petition" class="btn-primary">Sign Our Petition</a>
+  </div>
+  <p class="hero-count">166 colleagues have signed</p>
+  </div>
+  </div>
+</section>
+
+
+<section id="story">
+  <div class="inner">
+    
+    <div class="story-intro-grid">
+      <div class="story-intro-copy">
+        <span class="badge">Our Story</span>
+        <h2 class="story-h2" style="margin-bottom:20px;">Who we are</h2>
+        <p class="t-body story-lead">The NewsGuild of Greater Philadelphia represents over 220 employees at <a href="https://www.inquirer.com" target="_blank" rel="noopener noreferrer">The Philadelphia Inquirer</a> who create the journalism, social media, advertising, and multiplatform technology that hundreds of thousands of people rely on every day.</p>
+
+        <div class="story-subsection">
+          <h2 class="story-h2">Where we've been</h2>
+          <p class="t-body">Through some of the news industry's most challenging years, Inquirer journalists have kept the region informed every single day — building digital tools that keep readers engaged, and breaking stories that uncover corruption, lead to local and state policy reform, and capture daily life in our communities around Philadelphia.</p>
+        </div>
+
+        <div class="story-subsection">
+          <h2 class="story-h2">What's next</h2>
+          <p class="t-body">We're fighting for a fair contract that protects our journalism and provides real quality-of-life improvement for our members — and we need your support!</p>
+        </div>
+      </div>
+
+      <div class="story-who">
+        <div class="story-who-stat">
+          <div class="story-stat-num">220+</div>
+          <div class="story-stat-label">Members</div>
+        </div>
+        <div class="story-who-stat">
+          <div class="story-stat-num">Local<br>38010</div>
+          <div class="story-stat-label">NewsGuild of Greater Philadelphia</div>
+        </div>
+        <div class="story-who-stat">
+          <div class="story-stat-num">Since<br>1937</div>
+          <div class="story-stat-label">Fighting for fair labor</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="demands">
+  <div class="inner">
+  <span class="badge" style="background:rgba(255,255,255,0.14);color:rgba(255,255,255,0.85);">Our Demands</span>
+  <div class="demands-layout">
+    <div>
+      <h2 class="t-h2" style="margin-bottom: 20px; color:var(--paper);">2025 Revenue Increase</h2>
+      <div class="demands-intro-text">
+        <p>Last year, bucking decades of decline in a struggling industry, The Inquirer saw its first revenue increase since 2004. As our publisher Lisa Hughes put it: our news organization is worth investing in again. <strong>We feel the same way.</strong></p>
+        <p>Simply put, there is no future to invest in without us.</p>
+        <p>For our next three-year contract, we are asking for:</p>
+      </div>
+      
+      <ul class="demand-list">
+        <li class="demand-item">
+          <div class="demand-title">Cost-of-living raises</div>
+          <div class="demand-desc">Pay raises that allow our workers to afford to live in the communities they cover.</div>
+        </li>
+        <li class="demand-item">
+          <div class="demand-title">Affordable healthcare</div>
+          <div class="demand-desc">Keep our healthcare <strong>affordable</strong>.</div>
+        </li>
+        <li class="demand-item">
+          <div class="demand-title">AI guardrails</div>
+          <div class="demand-desc">Responsible guardrails around artificial intelligence to protect <strong>the integrity of our journalism</strong>.</div>
+        </li>
+        <li class="demand-item">
+          <div class="demand-title">Better hiring</div>
+          <div class="demand-desc">Improved hiring practices to make our newsroom reflect the city it serves.</div>
+        </li>
+      </ul>
+    </div>
+    <div>
+      
+      <div class="demands-aside">
+        <p class="pull-quote-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua — ut enim ad minim veniam, quis nostrud exercitation.</p>
+        <p class="pull-quote-attr">— Lorem Ipsum, Placeholder Role</p>
+      </div>
+    </div>
+  </div>
+  </div></section>
+
+
+<section id="petition">
+  <div class="inner">
+  <span class="badge">Sign the Petition</span>
+  <div class="petition-layout">
+    <div>
+      <h2 class="t-h2" style="margin-bottom: 16px;">Show your Support</h2>
+      <p class="t-body">Whether you're a fan of our hard-hitting accountability journalism, a newsletter reader, a food and sports diehard, an enjoyer of our quirky social media videos, or someone who can't wait to read your favorite columnist's take on what's happening — your commitment to journalism makes our region better.</p>
+      <div class="petition-counter">
+        <div class="counter-num">166</div>
+        <div class="counter-label">Signatures and counting</div>
+        <div class="progress-track"><div class="progress-fill"></div></div>
+        <div class="progress-goals"><span>0</span><span>Goal: 400</span></div>
+        <p class="t-caption" style="margin-top:8px">Live count · Action Network</p>
+      </div>
+      <p class="t-body">The workers who produce <a href="https://www.inquirer.com" target="_blank" rel="noopener noreferrer">The Philadelphia Inquirer</a> every day thank you.</p>
+    </div>
+    <div>
+      
+      <div class="form-box">
+        <div class="form-hdr">Action Network Embed <span style="opacity:0.55;font-weight:400;text-transform:none;letter-spacing:0;">— placeholder</span></div>
+        <div class="petition-privacy-note">
+          Petition signatures are collected and stored by <a href="https://actionnetwork.org/privacy" target="_blank" rel="noopener noreferrer">Action Network</a>. By signing, you agree to their privacy policy. Your email will not be published or shared.
+        </div>
+        <div class="f-row">
+          <div class="f-field">
+            <label class="f-label">First Name</label>
+            <input class="f-input" type="text" placeholder="Jane" autocomplete="given-name">
+          </div>
+          <div class="f-field">
+            <label class="f-label">Last Name</label>
+            <input class="f-input" type="text" placeholder="Smith" autocomplete="family-name">
+          </div>
+        </div>
+        <div class="f-field">
+          <label class="f-label">Email Address</label>
+          <input class="f-input" type="email" placeholder="jane@example.com" autocomplete="email">
+        </div>
+        <div class="f-field">
+          <label class="f-label">Role / Title <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <input class="f-input" type="text" placeholder="Reader, subscriber, supporter...">
+        </div>
+        <div class="f-field">
+          <label class="f-label">Your Message <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <textarea class="f-input" placeholder="Leave a message of solidarity..."></textarea>
+        </div>
+        <div class="f-consent">
+          <input type="checkbox">
+          <span>I agree that my name and message may be displayed publicly as a supporter of this campaign. My email will not be published.</span>
+        </div>
+        <button class="btn-submit" type="button">Sign Our Petition</button>
+        <p class="form-footnote">Your email will never be shared or published.</p>
+        <div class="an-note">Replace with Action Network embed code</div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+
+
+<section id="testimonials">
+  <div class="inner">
+  <div class="t-intro">
+    <div>
+      <span class="badge" style="margin-bottom: 1rem;">Voices</span>
+      <h2 class="t-h2">In their own words</h2>
+    </div>
+  </div>
+  <div class="t-grid">
+    
+    <div class="t-card featured">
+      <p class="t-quote">"Covering crime at The Inquirer means witnessing the best and worst of Philadelphia — a family's deepest pain, a neighbor's care. Telling stories about the people at the center of it helps the public understand and demand better. The Inquirer prioritizes that work."</p>
+      <div class="t-footer">
+        <div class="t-avatar">ER</div>
+        <div>
+          <div class="t-name">Ellie Rushing</div>
+          <div class="t-role">Criminal Justice Reporter · NewsGuild VP</div>
+        </div>
+        <span class="badge" style="margin-left:auto;margin-bottom:0;font-size:9px;padding:4px 10px">Featured</span>
+      </div>
+    </div>
+    
+    <div class="t-card">
+      <p class="t-quote">"I watched Vietnam, civil rights and Watergate as a kid, and that convinced me that journalism was a path toward a better and more enlightened America. At The Inquirer, I have the freedom to write whatever is necessary to afflict the comfortable, and comfort the afflicted."</p>
+      <div class="t-footer">
+        <div class="t-avatar">WB</div>
+        <div>
+          <div class="t-name">Will Bunch</div>
+          <div class="t-role">Inquirer Columnist</div>
+        </div>
+      </div>
+    </div>
+    <div class="t-card">
+      <p class="t-quote">"Artists here make impactful, urgent work that provides insight into the human condition, interrogates institutional norms, and challenges oppression in groundbreaking ways — so it's an honor to amplify those conversations for the Inquirer's curious readership."</p>
+      <div class="t-footer">
+        <div class="t-avatar">RC</div>
+        <div>
+          <div class="t-name">Rosa Cartagena</div>
+          <div class="t-role">Arts &amp; Entertainment Reporter</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="t-more">
+    <a href="#" class="btn-outline-sm">Load More Voices</a>
+  </div>
+  </div>
+</section>
+
+
+<section id="share">
+  <div class="inner share-inner">
+    <div>
+      <span class="badge" style="background:rgba(255,255,255,0.18);color:rgba(255,255,255,0.8);margin-bottom:1.2rem">Share &amp; Contact</span>
+      <h2 class="share-title">Spread the word.<br>Tell a friend.</h2>
+      <p class="share-sub">Share this page with your colleagues, readers, and community. Every signature matters.</p>
+      <div class="share-btns">
+        <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href)">Copy Link</button>
+        <a class="share-btn" href="https://twitter.com/intent/tweet?text=Support+the+NewsGuild+of+Greater+Philadelphia+%E2%80%94+sign+the+petition+for+a+fair+contract&url=" target="_blank" rel="noopener noreferrer">Twitter / X</a>
+        <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank" rel="noopener noreferrer">Facebook</a>
+        <a class="share-btn" href="https://bsky.app/intent/compose?text=Support+the+NewsGuild+of+Greater+Philadelphia+%E2%80%94+sign+the+petition+for+a+fair+contract+" target="_blank" rel="noopener noreferrer">Bluesky</a>
+        <a class="share-btn" href="mailto:?subject=Support+the+NewsGuild+Fair+Contract&body=Sign+the+petition+to+support+Inquirer+workers%3A+">Email a Friend</a>
+      </div>
+    </div>
+    <div>
+      <div class="contact-box">
+        <p class="contact-label">Get in touch</p>
+        <p class="contact-body">Questions about the campaign, our contract fight, or want to get more involved with the NewsGuild of Greater Philadelphia?</p>
+        <p class="contact-email"><a id="contact-email-link" class="contact-email" style="color:var(--paper);text-decoration:none;"></a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<div id="privacy-modal" role="dialog" aria-modal="true" aria-labelledby="privacy-modal-title">
+  <div class="privacy-modal-box">
+    <button class="privacy-modal-close" onclick="closePrivacy()">✕ Close</button>
+    <h2 id="privacy-modal-title">Privacy Policy</h2>
+    <span class="pm-date">Effective April 2026 · NewsGuild of Greater Philadelphia, Local 38010</span>
+
+    <h3>Who we are</h3>
+    <p>This website is operated by the NewsGuild of Greater Philadelphia (Local 38010, CWA), a labor union representing employees of <a href="https://www.inquirer.com" target="_blank" rel="noopener">The Philadelphia Inquirer</a>. It is a campaign site supporting our contract negotiations and is not affiliated with <a href="https://www.inquirer.com" target="_blank" rel="noopener">The Philadelphia Inquirer</a> as a company.</p>
+
+    <h3>What we collect</h3>
+    <p><strong>Petition signatures</strong> — If you sign our petition, your name, email address, and any optional message are submitted to and stored by <a href="https://actionnetwork.org/privacy" target="_blank" rel="noopener">Action Network</a>, our petition platform. We use this data only to demonstrate community support for our contract campaign.</p>
+    <p><strong>Analytics</strong> — We use Google Analytics 4 (GA4) to understand how visitors use this site. GA4 collects anonymized data including pages visited, device type, browser, and approximate geographic location (city level). IP addresses are anonymized by default. No personally identifiable information is shared with Google.</p>
+
+    <h3>Cookies</h3>
+    <p>Google Analytics sets cookies in your browser to distinguish unique visitors and sessions. These are analytics-only cookies; we do not use advertising or tracking cookies. You can opt out of Google Analytics at any time using <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google's browser opt-out add-on</a> or by enabling "Do Not Track" in your browser settings.</p>
+
+    <h3>How we use your data</h3>
+    <p>All data collected through this site is used solely to support the NewsGuild of Greater Philadelphia's contract campaign. We do not sell, rent, or share your personal data with any third party for commercial purposes.</p>
+
+    <h3>Third-party processors</h3>
+    <p>We use the following services to operate this site: <a href="https://actionnetwork.org/privacy" target="_blank" rel="noopener">Action Network</a> (petition collection) and <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Analytics</a> (site analytics). Each processor handles data under their own privacy policies.</p>
+
+    <h3>Your rights</h3>
+    <p>You may request access to, correction of, or deletion of any personal data we hold about you at any time. New Jersey residents have additional rights under the NJ Data Privacy Act, including the right to opt out of data processing. To exercise any of these rights, contact us at the email below.</p>
+
+    <h3>Contact</h3>
+    <p>For privacy-related requests or questions, email <a id="privacy-contact-link" href="#"></a>.</p>
+  </div>
+</div>
+
+
+<footer>
+  <div class="footer-main">
+    <span class="footer-item">© 2026 NewsGuild of Greater Philadelphia, Local 38010</span>
+    <button class="footer-item" onclick="openPrivacy()" style="background:none;border:none;cursor:pointer;padding:0;">Privacy</button>
+  </div>
+  <div class="footer-privacy">
+    This is a union organizing campaign. We collect petition signatures solely to support our contract campaign.<br>
+    We do not sell, share, or use your information for any commercial purpose. Petition data is managed by <a href="https://actionnetwork.org/privacy" target="_blank" rel="noopener">Action Network</a>.
+  </div>
+</footer>
+
+
+<div id="wf-toolbar">
+  <span id="wf-label">Wireframe v3</span>
+  <div id="wf-div"></div>
+  <button class="wf-btn active" id="btn-desktop" onclick="setView('desktop')">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M5 14h6M8 12v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Desktop
+  </button>
+  <button class="wf-btn" id="btn-tablet" onclick="setView('tablet')">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="1" width="11" height="14" rx="1.5" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="12.5" r="0.8" fill="currentColor"/></svg>
+    Tablet
+  </button>
+  <button class="wf-btn" id="btn-mobile" onclick="setView('mobile')">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="4" y="1" width="8" height="14" rx="1.5" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="12.5" r="0.8" fill="currentColor"/></svg>
+    Mobile
+  </button>
+</div>
+
+<div id="vp-shell">
+  <div id="vp-wrap">
+    <div id="vp-lbl"></div>
+    <div id="vp-notch"></div>
+    <iframe id="vp-frame" title="preview"></iframe>
+  </div>
+</div>
+
+<script>
+  var _view = 'desktop';
+  var _ready = false;
+  var shell = document.getElementById('vp-shell');
+  var wrap  = document.getElementById('vp-wrap');
+  var frame = document.getElementById('vp-frame');
+  var notch = document.getElementById('vp-notch');
+  var lbl   = document.getElementById('vp-lbl');
+
+  function loadFrame() {
+    if (_ready) return;
+    _ready = true;
+    try {
+      var html = document.documentElement.outerHTML;
+      // Strip toolbar block
+      var tbStart = html.indexOf('<div id="wf-toolbar">');
+      var tbClose = html.indexOf('<div id="vp-shell">');
+      if (tbStart > -1 && tbClose > -1) html = html.slice(0, tbStart) + html.slice(tbClose);
+      // Strip vp-shell block
+      var ovStart = html.indexOf('<div id="vp-shell">');
+      var ovEnd   = html.indexOf('</div>', html.indexOf('</div>', html.indexOf('</div>', html.indexOf('</div>', ovStart) + 1) + 1) + 1) + 6;
+      if (ovStart > -1) html = html.slice(0, ovStart) + html.slice(ovEnd);
+      // Strip all script tags — use RegExp constructor to avoid literal <script in source
+      var scriptRe = new RegExp('<scr' + 'ipt[\\s\\S]*?<\\/sc' + 'ript>', 'gi');
+      html = html.replace(scriptRe, '');
+      // Use srcdoc (works from file:// origin; blob: is blocked in modern browsers
+      // when the parent is file://, which caused the tablet/mobile preview to stay blank)
+      frame.setAttribute('srcdoc', '<!doctype html>' + html);
+    } catch (err) {
+      console.error('Preview failed to build:', err);
+      frame.setAttribute('srcdoc', '<!doctype html><p style="font-family:sans-serif;padding:24px;">Preview failed to load. Open DevTools for details.</p>');
+    }
+  }
+
+  function setView(view) {
+    _view = view;
+    var btns = document.querySelectorAll('.wf-btn');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+    document.getElementById('btn-' + view).classList.add('active');
+    if (view === 'desktop') {
+      shell.classList.remove('on');
+      document.body.style.overflow = '';
+      return;
+    }
+    loadFrame();
+    shell.classList.add('on');
+    document.body.style.overflow = 'hidden';
+    var avH = window.innerHeight - 68 - 48;
+    var avW = window.innerWidth - 32;
+    if (view === 'tablet') {
+      wrap.style.width  = Math.min(768, avW) + 'px';
+      wrap.style.height = Math.min(1024, avH) + 'px';
+      notch.classList.remove('on');
+      lbl.textContent = '768 x 1024';
+    } else {
+      wrap.style.width  = Math.min(375, avW) + 'px';
+      wrap.style.height = Math.min(812, avH) + 'px';
+      notch.classList.add('on');
+      lbl.textContent = '375 x 812';
+    }
+  }
+
+  window.addEventListener('resize', function() {
+    if (_view !== 'desktop') setView(_view);
+  });
+
+  // Assemble contact email client-side to prevent scraping
+  (function() {
+    var u = 'newsguild';
+    var d = 'philainquirer' + '.' + 'com';
+    var addr = u + '@' + d;
+    var el = document.getElementById('contact-email-link');
+    if (el) { el.href = 'mailto:' + addr; el.textContent = addr; }
+    var pel = document.getElementById('privacy-contact-link');
+    if (pel) { pel.href = 'mailto:' + addr; pel.textContent = addr; }
+  })();
+
+  // Privacy modal
+  function openPrivacy() {
+    document.getElementById('privacy-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePrivacy() {
+    document.getElementById('privacy-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('privacy-modal').addEventListener('click', function(e) {
+    if (e.target === this) closePrivacy();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePrivacy();
+  });
+</script>
+
+</body>
+</html>
