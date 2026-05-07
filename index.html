@@ -1921,9 +1921,14 @@ footer {
 
 <script>
   // Hide toolbar if running inside the preview iframe
-  if (window !== window.top) {
+  try {
+    if (window.self !== window.top || window.frameElement) {
+      var t = document.getElementById('wf-toolbar');
+      if (t) t.style.setProperty('display', 'none', 'important');
+    }
+  } catch(e) {
     var t = document.getElementById('wf-toolbar');
-    if (t) t.classList.add('in-iframe');
+    if (t) t.style.setProperty('display', 'none', 'important');
   }
 
   var _view = 'desktop';
@@ -1991,17 +1996,6 @@ footer {
     if (_view !== 'desktop') setView(_view);
   });
 
-  // Hide viewport toolbar once user scrolls past hero
-  (function() {
-    var toolbar = document.getElementById('wf-toolbar');
-    var hero = document.getElementById('hero');
-    if (!toolbar || !hero) return;
-    var observer = new IntersectionObserver(function(entries) {
-      toolbar.style.opacity = entries[0].isIntersecting ? '1' : '0';
-      toolbar.style.pointerEvents = entries[0].isIntersecting ? 'auto' : 'none';
-    }, { threshold: 0.1 });
-    observer.observe(hero);
-  })();
 
   // Assemble contact email client-side to prevent scraping
   (function() {
