@@ -1022,6 +1022,97 @@ textarea.f-input {
 }
 
 /* ─────────────────────────────────
+   UPDATES — white band
+───────────────────────────────── */
+#updates {
+  background: var(--paper);
+  padding: 80px 0;
+}
+.updates-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+.update-card {
+  background: var(--bone);
+  border-radius: 8px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.featured-update {
+  border-left: 3px solid var(--teal);
+}
+.update-tag {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.update-headline {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.5vw, 26px);
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.25;
+}
+.update-body {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0;
+}
+.update-date {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: auto;
+}
+.leadership-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 24px;
+}
+.leader-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+.leader-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--bone);
+  border: 2px solid var(--border);
+}
+.leader-name {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.leader-role {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+@media (max-width: 1024px) {
+  .updates-grid { grid-template-columns: 1fr; }
+  .leadership-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 640px) {
+  .leadership-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ─────────────────────────────────
    SHARE / CONTACT — bright-gray band
 ───────────────────────────────── */
 #share {
@@ -1602,6 +1693,68 @@ footer {
   </div>
 </section>
 
+
+<section id="updates">
+  <div class="inner">
+    <div class="t-intro">
+      <div>
+        <span class="badge" style="margin-bottom: 1rem;">NewsGuild Updates</span>
+        <h2 class="t-h2">What's happening</h2>
+      </div>
+    </div>
+
+    <div class="updates-grid">
+
+      <div class="update-card featured-update">
+        <span class="update-tag">Announcement</span>
+        <h3 class="update-headline">Product Design &amp; Engineering joins the Guild</h3>
+        <p class="update-body">The Product Design and Engineering department has officially joined the NewsGuild of Greater Philadelphia. Their membership strengthens our unit and makes clear that the people who build and sustain The Inquirer's digital future are standing together with the newsroom.</p>
+        <span class="update-date">May 2026</span>
+      </div>
+
+      <div class="update-card">
+        <span class="update-tag">Leadership</span>
+        <h3 class="update-headline">Meet your new Guild leadership</h3>
+        <p class="update-body">We have a new executive team in place and ready to fight for a fair contract. Get to know the people representing you at the table.</p>
+        <span class="update-date">May 2026</span>
+      </div>
+
+    </div>
+
+    <div class="leadership-grid">
+      <div class="leader-card">
+        <div class="leader-avatar"></div>
+        <div class="leader-name">Name Placeholder</div>
+        <div class="leader-role">President</div>
+      </div>
+      <div class="leader-card">
+        <div class="leader-avatar"></div>
+        <div class="leader-name">Name Placeholder</div>
+        <div class="leader-role">Vice President</div>
+      </div>
+      <div class="leader-card">
+        <div class="leader-avatar"></div>
+        <div class="leader-name">Name Placeholder</div>
+        <div class="leader-role">Vice President</div>
+      </div>
+      <div class="leader-card">
+        <div class="leader-avatar"></div>
+        <div class="leader-name">Name Placeholder</div>
+        <div class="leader-role">Steward</div>
+      </div>
+      <div class="leader-card">
+        <div class="leader-avatar"></div>
+        <div class="leader-name">Name Placeholder</div>
+        <div class="leader-role">Steward</div>
+      </div>
+      <div class="leader-card">
+        <div class="leader-avatar"></div>
+        <div class="leader-name">Name Placeholder</div>
+        <div class="leader-role">Steward</div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section id="share">
   <div class="inner share-inner">
