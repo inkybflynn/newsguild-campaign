@@ -1041,9 +1041,21 @@ textarea.f-input {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+}
+.update-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.10);
+  border-color: var(--teal);
+  z-index: 1;
 }
 .featured-update {
   border-left: 3px solid var(--teal);
+}
+.featured-update:hover {
+  border-left-color: var(--teal);
 }
 .update-tag {
   font-family: var(--font-ui);
@@ -1083,6 +1095,16 @@ textarea.f-input {
   align-items: center;
   gap: 10px;
   text-align: center;
+  padding: 20px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+}
+.leader-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.10);
+  border-color: var(--teal);
+  background: var(--bone);
 }
 .leader-avatar {
   width: 80px;
@@ -1104,12 +1126,45 @@ textarea.f-input {
   text-transform: uppercase;
   color: var(--muted);
 }
+.press-cta {
+  margin-top: 56px;
+  padding: 40px 48px;
+  background: var(--night);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+.press-cta-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin: 0;
+}
+.press-cta-headline {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.5vw, 30px);
+  color: var(--paper);
+  margin: 0;
+}
+.press-cta-body {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.65);
+  margin: 0;
+  max-width: 560px;
+}
 @media (max-width: 1024px) {
   .updates-grid { grid-template-columns: 1fr; }
   .leadership-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 640px) {
   .leadership-grid { grid-template-columns: repeat(2, 1fr); }
+  .press-cta { padding: 28px 24px; }
 }
 
 /* ─────────────────────────────────
@@ -1753,6 +1808,13 @@ footer {
         <div class="leader-role">Steward</div>
       </div>
     </div>
+
+    <div class="press-cta">
+      <p class="press-cta-label">Press inquiries</p>
+      <h3 class="press-cta-headline">Covering the contract fight?</h3>
+      <p class="press-cta-body">We welcome interview requests from journalists covering labor, local news, and the future of Philadelphia journalism. Reach out and we'll get back to you quickly.</p>
+      <a id="press-email-link" href="#" class="btn-ghost">Request an interview</a>
+    </div>
   </div>
 </section>
 
@@ -1927,6 +1989,8 @@ footer {
     if (el) { el.href = 'mailto:' + addr; el.textContent = addr; }
     var pel = document.getElementById('privacy-contact-link');
     if (pel) { pel.href = 'mailto:' + addr; pel.textContent = addr; }
+    var prel = document.getElementById('press-email-link');
+    if (prel) { prel.href = 'mailto:' + addr + '?subject=Press%20Inquiry%20%E2%80%94%20Interview%20Request'; }
   })();
 
   // Privacy modal
